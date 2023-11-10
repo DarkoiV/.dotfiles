@@ -1,16 +1,10 @@
--- Mappings.
--- See `:help vim.diagnostic.*` for documentation on any of the below functions
 local opts = { noremap = true, silent = true }
 vim.keymap.set('n', '<space>e', vim.diagnostic.open_float, opts)
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
 vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist, opts)
 
--- Use an on_attach function to only map the following keys
--- after the language server attaches to the current buffer
-local on_attach = function(_, bufnr)
-    -- Mappings.
-    -- See `:help vim.lsp.*` for documentation on any of the below functions
+local default_on_attach = function(_, bufnr)
     local bufopts = { noremap = true, silent = true, buffer = bufnr }
     vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, bufopts)
     vim.keymap.set('n', 'gd', vim.lsp.buf.definition, bufopts)
@@ -42,8 +36,17 @@ local lspconfig = require 'lspconfig'
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
 -- Clangd --------------------------------------------------
+local function clang_on_attach(client, buffnr)
+    vim.keymap.set('n', '<leader>m', function()
+        local build_dir = client.workspace_folders[1].name .. '/build'
+        local buildcmd  = "cd " .. build_dir .. " && make -j $(nproc)"
+        print(buildcmd)
+        Func.open_terminal(buildcmd)
+    end, {})
+    default_on_attach(client, buffnr)
+end
 lspconfig.clangd.setup {
-    on_attach = on_attach,
+    on_attach = clang_on_attach,
     cmd = { "clangd",
         "--background-index",
         "--pch-storage=memory",
@@ -74,7 +77,7 @@ local function initForNeovimConfig(client)
 end
 
 lspconfig.lua_ls.setup {
-    on_attach = on_attach,
+    on_attach = default_on_attach,
     capabilities = capabilities,
     root_dir = function(filename)
         local nvimConfig = lspconfig.util.root_pattern("init.vim")(filename)

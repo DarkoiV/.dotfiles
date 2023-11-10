@@ -26,10 +26,10 @@ call plug#begin()
 call plug#end()
 
 "Plugins settings
-:lua require("plugins")
 :lua require("functions")
+:lua require("plugins")
 
 "Mappings
 :nnoremap <leader>n :NvimTreeFindFileToggle<CR>
 :nnoremap <leader>N :NvimTreeToggle<CR>
-:tnoremap <Esc> :quit
+:tnoremap <Esc> <C-\><C-N>:quit<CR>
