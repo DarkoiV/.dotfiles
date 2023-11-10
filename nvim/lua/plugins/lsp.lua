@@ -9,9 +9,6 @@ vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist, opts)
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
 local on_attach = function(_, bufnr)
-    -- Enable completion triggered by <c-x><c-o>
-    vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
-
     -- Mappings.
     -- See `:help vim.lsp.*` for documentation on any of the below functions
     local bufopts = { noremap = true, silent = true, buffer = bufnr }
@@ -35,15 +32,16 @@ local on_attach = function(_, bufnr)
     vim.api.nvim_create_autocmd({ "BufWrite" }, {
         callback = function()
             vim.lsp.buf.format(bufopts)
-        end
+        end,
+        buffer = bufnr
     })
 end
 
--- Specific LSP settings
+-- Specific LSP settings -----------------------------------
 local lspconfig = require 'lspconfig'
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
--- Clangd
+-- Clangd --------------------------------------------------
 lspconfig.clangd.setup {
     on_attach = on_attach,
     cmd = { "clangd",
@@ -56,6 +54,8 @@ lspconfig.clangd.setup {
     capabilities = capabilities
 }
 
+
+-- LuaLs ---------------------------------------------------
 local function initForNeovimConfig(client)
     client.config.settings = vim.tbl_deep_extend('force', client.config.settings, {
         Lua = {
@@ -65,28 +65,27 @@ local function initForNeovimConfig(client)
             workspace = {
                 checkThirdParty = false,
                 library = vim.api.nvim_get_runtime_file("", true)
-            }
+            },
+            insert_final_newline = true
         }
     })
 
     client.notify("workspace/didChangeConfiguration", { settings = client.config.settings })
 end
 
--- LuaLs
 lspconfig.lua_ls.setup {
     on_attach = on_attach,
     capabilities = capabilities,
     root_dir = function(filename)
+        local nvimConfig = lspconfig.util.root_pattern("init.vim")(filename)
         local luaConfig = lspconfig.util.root_pattern(".luarc.json", ".luarc.jsonc", ".luacheckrc", ".stylua.toml",
             "stylua.toml", "selene.toml", "selene.yml", ".git")(filename)
-        local nvimConfig = lspconfig.util.root_pattern("init.vim")(filename)
-        return luaConfig or nvimConfig
+        return nvimConfig or luaConfig
     end,
     on_init = function(client)
         -- SETUP FOR NEOVIM FILES
         local root = client.workspace_folders[1].name
         if vim.loop.fs_stat(root .. '/init.vim') then
-            print("HELLO NEOVIM CONFIG")
             initForNeovimConfig(client)
         end
         return true

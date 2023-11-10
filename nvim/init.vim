@@ -14,6 +14,7 @@ call plug#begin()
     Plug 'hrsh7th/nvim-cmp'
     Plug 'dcampos/nvim-snippy'
     Plug 'rose-pine/neovim'
+    Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
 "CMP plugs
     Plug 'dcampos/cmp-snippy'
@@ -24,12 +25,11 @@ call plug#begin()
     Plug 'hrsh7th/cmp-path'
 call plug#end()
 
-"File Tree explorer
-:lua require("tree-settings")
+"Plugins settings
+:lua require("plugins")
+:lua require("functions")
+
+"Mappings
 :nnoremap <leader>n :NvimTreeFindFileToggle<CR>
 :nnoremap <leader>N :NvimTreeToggle<CR>
-
-:lua require("cmp-settings")
-:lua require("lsp-settings")
-:lua require("rose-pine-settings")
-
+:tnoremap <Esc> :quit
