@@ -41,7 +41,7 @@ local function clang_on_attach(client, buffnr)
         local build_dir = client.workspace_folders[1].name .. '/build'
         local buildcmd  = "cd " .. build_dir .. " && make -j $(nproc)"
         print(buildcmd)
-        Func.open_terminal(buildcmd)
+        require 'functions'.open_terminal(buildcmd)
     end, {})
     default_on_attach(client, buffnr)
 end
