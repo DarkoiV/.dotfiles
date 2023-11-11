@@ -7,35 +7,52 @@ local TREE_WINDOW_HEIGHT = math.ceil(math.min(100, EDITOR_HEIGHT / 1.5))
 local TREE_POS_Y = (EDITOR_HEIGHT - TREE_WINDOW_HEIGHT) * 0.4
 local TREE_POS_X = (EDITOR_WIDTH - TREE_WINDOW_WDITH) * 0.5
 
-local isSpecialFileName = function(name)
-    if string.sub(name, 1, 4) == "init" then
-        return true
-    end
-    return false
+local function match(name, to)
+    if (#name < #to) then return false end
+    return string.sub(name, 1, #to) == to
 end
 
-local sortSpecialNameFilesFirst = function(a, b)
-    if isSpecialFileName(a.name) and isSpecialFileName(b.name) then
-        return a.name < b.name
-    elseif isSpecialFileName(a.name) then
+local function isDirectory(node)
+    return node.type == "directory"
+end
+
+local isNotSpecialFile = function(node)
+    local specialNames = { "init", "CMakeLists.txt" }
+    for _, v in pairs(specialNames) do
+        if match(node.name, v) then
+            return false
+        end
+    end
+    return true
+end
+
+local isDotFile = function(node)
+    return match(node.name, ".")
+end
+
+local byName = function(a, b)
+    return a.name < b.name
+end
+
+local sortByRule = function(a, b, rule)
+    if rule(a) and rule(b) then
+        return nil
+    elseif rule(a) then
         return true
-    elseif isSpecialFileName(b.name) then
+    elseif rule(b) then
         return false
     else
-        return a.name < b.name
+        return nil
     end
 end
 
-local sortFiles = function(a, b)
-    if a.type == "directory" and b.type == "directory" then
-        return a.name < b.name
-    elseif a.type == "directory" then
-        return true
-    elseif b.type == "directory" then
-        return false
-    else
-        return sortSpecialNameFilesFirst(a, b)
+local sortNodes = function(a, b)
+    local rules = { isDirectory, isDotFile, isNotSpecialFile }
+    for _, rule in pairs(rules) do
+        local result = sortByRule(a, b, rule)
+        if result ~= nil then return result end
     end
+    return byName(a, b)
 end
 
 tree.setup
@@ -44,7 +61,7 @@ tree.setup
     sort =
     {
         sorter = function(nodes)
-            table.sort(nodes, sortFiles)
+            table.sort(nodes, sortNodes)
         end
     },
     view =
