@@ -7,3 +7,4 @@ vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist, opts)
 -- Specific LSP settings -----------------------------------
 require "plugins.lsp.clangd-setup"
 require "plugins.lsp.luaLs-setup"
+require "plugins.lsp.gopls-setup"
