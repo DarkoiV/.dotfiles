@@ -26,7 +26,6 @@ call plug#begin()
 call plug#end()
 
 "Plugins settings
-:lua require("functions")
 :lua require("plugins")
 
 "Mappings
