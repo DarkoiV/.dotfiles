@@ -58,12 +58,9 @@ end
 tree.setup
 {
     hijack_cursor = true,
-    sort =
-    {
-        sorter = function(nodes)
-            table.sort(nodes, sortNodes)
-        end
-    },
+    sort_by = function(nodes)
+        table.sort(nodes, sortNodes)
+    end,
     view =
     {
         float =
