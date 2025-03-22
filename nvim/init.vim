@@ -31,4 +31,3 @@ call plug#end()
 "Mappings
 :nnoremap <leader>n :NvimTreeFindFileToggle<CR>
 :nnoremap <leader>N :NvimTreeToggle<CR>
-:tnoremap <Esc> <C-\><C-N>:quit<CR>
