@@ -15,6 +15,9 @@ call plug#begin()
     Plug 'dcampos/nvim-snippy'
     Plug 'rose-pine/neovim'
     Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+    Plug 'monkoose/parsley'
+    Plug 'monkoose/nvlime'
+    Plug 'lukas-reineke/indent-blankline.nvim'
 
 "CMP plugs
     Plug 'dcampos/cmp-snippy'
