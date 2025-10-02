@@ -1,6 +1,5 @@
 -- LuaLs ---------------------------------------------------
 local defaults = require 'plugins.lsp.defaults'
-local lspconfig = require 'lspconfig'
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
 local function initForNeovimConfig(client)
@@ -20,7 +19,7 @@ local function initForNeovimConfig(client)
     client.notify("workspace/didChangeConfiguration", { settings = client.config.settings })
 end
 
-lspconfig.lua_ls.setup {
+vim.lsp.config.lua_ls = {
     on_attach = defaults.on_attach,
     capabilities = capabilities,
     root_dir = function(filename)

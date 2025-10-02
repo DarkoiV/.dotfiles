@@ -43,7 +43,7 @@ cmp.setup({
         ["<S-Tab>"] = cmp.mapping(shift_tab_behaviour, { "i", "s" }),
         ['<Up>'] = cmp.mapping.select_prev_item(select_opts),
         ['<Down>'] = cmp.mapping.select_next_item(select_opts),
-        ['<C-Space>'] = cmp.mapping.complete(),
+        ['<C-c>'] = cmp.mapping.complete(),
         ['<C-e>'] = cmp.mapping.abort(),
         ['<CR>'] = cmp.mapping.confirm({ select = true }),
     },
